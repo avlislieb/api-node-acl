@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  node_app_acl:
+    build: .
+    container_name: node_app_acl
+    ports:
+      - '3335:3000'
+    volumes:
+      - .:/usr/app
+    networks:
+      node_app_acl_network:
+        ipv4_address: 172.24.0.2
+
+  node_app_acl_pg:
+    image: bitnami/postgresql
+    container_name: node_app_acl_pg
+    ports:
+      - 5435:5432
+    environment:
+      - POSTGRESQL_USERNAME=admin
+      - POSTGRESQL_PASSWORD=admin
+      - POSTGRESQL_DATABASE=permissions
+    networks:
+      node_app_acl_network:
+        ipv4_address: 172.24.0.3
+      
+
+networks:
+  node_app_acl_network:
+    name: node_app_acl_network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.24.0.0/16
